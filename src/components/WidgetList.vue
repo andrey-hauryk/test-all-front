@@ -2,7 +2,7 @@
   <div>
     <h2>Список виджетов</h2>
 
-    <button @click="showModal = true" style="margin-bottom:1rem; padding:0.5rem 1rem;">
+    <button @click="openModal" style="margin-bottom:1rem; padding:0.5rem 1rem;">
       + Добавить виджет
     </button>
 
@@ -18,7 +18,6 @@
       />
     </div>
 
-    <!-- Модальное окно -->
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
         <button class="modal-close" @click="closeModal">&times;</button>
@@ -29,43 +28,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import WidgetCard from './WidgetCard.vue'
 import WidgetForm from './WidgetForm.vue'
-import type { Widget } from '../types/widget'
+import { useWidgets } from '../composables/useWidgets'
 
-const widgets = ref<Widget[]>([])
-let nextId = 1
-const showModal = ref(false)
-
-function addWidget(data: { name: string; type: Widget['type'] }) {
-  widgets.value.push({
-    id: nextId++,
-    name: data.name,
-    type: data.type,
-    status: 'active',
-  })
-}
-
-function toggleStatus(id: number) {
-  const widget = widgets.value.find(w => w.id === id)
-  if (widget) {
-    widget.status = widget.status === 'active' ? 'inactive' : 'active'
-  }
-}
-
-function removeWidget(id: number) {
-  widgets.value = widgets.value.filter(w => w.id !== id)
-}
-
-function handleAdd(data: { name: string; type: Widget['type'] }) {
-  addWidget(data)
-  closeModal()
-}
-
-function closeModal() {
-  showModal.value = false
-}
+const {
+  widgets,
+  showModal,
+  toggleStatus,
+  removeWidget,
+  handleAdd,
+  openModal,
+  closeModal,
+} = useWidgets()
 </script>
 
 <style scoped>
